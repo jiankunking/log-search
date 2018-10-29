@@ -1,0 +1,43 @@
+- name: "filebeat deploy"
+  hosts: "{{hosts}}"
+  become: yes
+  tasks:
+  - name: mkdir -p /data/download/filebeat/{{project}}/{{id}}
+    local_action: shell mkdir -p /data/download/filebeat/{{project}}/{{id}}
+  - name: download python script
+    local_action: get_url url=http://{{download_url}}/filebeat/init_filebeat_yml.py dest=/data/download/filebeat/{{project}}/{{id}}
+  - name: mkdir -p /usr/sbin/filebeat
+    shell: mkdir -p /usr/sbin/filebeat
+  - name: generate filebeat config flie
+    local_action: shell python /data/download/filebeat/{{id}}/init_filebeat_yml.py --id={{id}} --consul={{consul}} --path=/data/download/filebeat/{{id}} --version={{version}} --project={{project}}
+  - name: copy filebeat service file
+    copy:
+      src=/data/download/filebeat/{{id}}/yml/{{id}}.service
+      dest=/etc/systemd/system/{{id}}.service
+    when: ansible_distribution_major_version == "7"
+  - name: create Downloads dir
+    file:
+      path=/root/Downloads
+      state=directory
+  - name: download filebeat agent
+    get_url: url=http://{{download_url}}/filebeat/filebeat-{{version}} dest=/usr/sbin/filebeat/{{project}}/filebeat-{{version}} mode=755
+  - name: copy yml
+    copy:
+      src=/data/download/filebeat/{{id}}/yml/{{id}}.yml
+      dest=/root/Downloads/{{id}}.yml
+  - name: create filebeats configure dir
+    file:
+      path=/etc/filebeat
+      state=directory
+  - name: remove filebeat files 
+    local_action: shell rm -rf /data/download/filebeat/{{id}}   
+  - name: move yml
+    shell: cp -f /root/Downloads/{{id}}.yml /etc/filebeat/{{id}}.yml
+  - name: enable filebeat
+    service:
+      name={{id}}
+      enabled=yes
+  - name: reload all service
+    shell: systemctl daemon-reload
+  - name: start filebeat
+    service: name={{id}} state=restarted

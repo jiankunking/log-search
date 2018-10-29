@@ -1,0 +1,12 @@
+curl -H "Content-Type:application/json" -X POST --data '{"params": {"id": "HSIRRFW_filebeat_10.138.227.55","version": "6.3.1","consul": "10.138.16.192:8500","download_url":"10.138.16.192:8081"},"hosts":["10.138.227.55"]}'  http://10.138.16.192:8090/api/v1/ansible/play/filebeat/v0.0.1
+
+
+id命名规则
+multiple
+log
+docker
+
+HSIRRFW_filebeat_multiple_10.138.227.55
+
+
+id中不要带type 否则的话 一台机器上注册多个filebeat服务 无法停止之前的服务

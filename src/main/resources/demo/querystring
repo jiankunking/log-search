@@ -1,0 +1,117 @@
+# querystring 文档
+# http://cwiki.apachecn.org/pages/viewpage.action?pageId=4883355
+
+#es 集群
+10.138.16.188:9200,10.138.16.189:9200,10.138.16.190:9200
+
+# 请求url
+
+http://localhost:8080/api/v1/clusters/MONITOR/projects/MONITOR/apps/all/logs?fromTime=1511971200000&toTime=1543507200000&keyword=host.ip: 10.138.26.9 AND fields.app: btbrrs-rm AND message:BJ0VR30A8
+
+# 请求参数
+fromTime:1511971200000
+toTime:1543507200000
+//beforeLines:0
+//afterLines:10
+//startID:eyJkb2NJRCI6IkFXVTdSZ0FQcWhmMUo0ZGtxNGJWIiwidGltZVN0YW1wU29ydCI6MTUzNDI5ODM1MTkwMiwib2Zmc2V0Ijo0OTAyfQ==
+keyword:host.ip: 10.138.26.9 AND fields.app: btbrrs-rm AND message:BJ0VR30A8
+
+# 请求转换后
+{
+    "size":100,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "term":{
+                        "fields.project":{
+                            "value":"MONITOR",
+                            "boost":1
+                        }
+                    }
+                },
+                {
+                    "query_string":{
+                        "query":"host.ip: 10.138.26.9 AND fields.app: btbrrs-rm AND message:BJ0VR30A8",
+                        "fields":[
+
+                        ],
+                        "use_dis_max":true,
+                        "tie_breaker":0,
+                        "default_operator":"or",
+                        "auto_generate_phrase_queries":false,
+                        "max_determinized_states":10000,
+                        "enable_position_increments":true,
+                        "fuzziness":"AUTO",
+                        "fuzzy_prefix_length":0,
+                        "fuzzy_max_expansions":50,
+                        "phrase_slop":0,
+                        "escape":false,
+                        "split_on_whitespace":true,
+                        "boost":1
+                    }
+                },
+                {
+                    "range":{
+                        "@timestamp":{
+                            "from":"2017-11-29T16:00:00.000Z",
+                            "to":"2018-11-29T16:00:00.000Z",
+                            "include_lower":true,
+                            "include_upper":true,
+                            "boost":1
+                        }
+                    }
+                }
+            ],
+            "disable_coord":false,
+            "adjust_pure_negative":true,
+            "boost":1
+        }
+    },
+    "_source":{
+        "includes":[
+            "message",
+            "fields.type",
+            "offset"
+        ],
+        "excludes":[
+            "beat",
+            "host",
+            "docker",
+            "input",
+            "prospector",
+            "fields.project"
+        ]
+    },
+    "sort":[
+        {
+            "@timestamp":{
+                "order":"asc"
+            }
+        },
+        {
+            "offset":{
+                "order":"asc"
+            }
+        },
+        {
+            "_uid":{
+                "order":"asc"
+            }
+        }
+    ],
+    "highlight":{
+        "pre_tags":[
+            "<logHighlight>"
+        ],
+        "post_tags":[
+            "</logHighlight>"
+        ],
+        "require_field_match":false,
+        "fields":{
+            "message":{
+
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+filebeat.inputs:
+- type: docker
+  enabled: true
+  containers.ids: 
+   - '*'
+  fields:
+    project: HSIRRFW
+    type: docker
+  multiline.pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d* '
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/local/data/logs/*/*.log
+  fields:
+    project: HSIRRFW
+    type: log
+  multiline.pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d* '
+  multiline.negate: true
+  multiline.match: after
+
+max_procs: 2
+processors:
+- add_docker_metadata: ~
+- add_host_metadata:
+   netinfo.enabled: true
+
+setup.template.settings:
+  index.number_of_shards: 3
+
+output.elasticsearch:
+  hosts: ["10.138.25.214:9200"]
+  #index: "filebeat-%{[beat.version]}-%{+yyyy.MM.dd}"
+  pipelines:
+    - pipeline: log-timestamp-appname
+      when.equals:
+        fields.type: "log"
+    - pipeline: docker-app-name
+      when.equals:
+        fields.type: "docker"
+

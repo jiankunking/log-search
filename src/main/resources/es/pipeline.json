@@ -1,0 +1,140 @@
+{
+  "xpack_monitoring_2": {
+    "description": "2: This is a placeholder pipeline for Monitoring API version 2 so that future versions may fix breaking changes.",
+    "processors": []
+  },
+  "k8s-docker-app-name": {
+    "description":"k8s pod app name pipeline",
+    "processors":[
+      {
+        "grok":{
+          "field":"docker.container.labels.io.kubernetes.pod.namespace",
+          "patterns":[
+            "%{NOTSPACE:fields.project}"
+          ]
+        }
+      },
+      {
+        "grok":{
+          "field":"docker.container.labels.io.kubernetes.pod.name",
+          "patterns":[
+            "%{DATA:fields.app}-(?:app-)?v\\d.*"
+          ]
+        }
+      },
+      {
+        "set":{
+          "field":"fields.instance",
+          "value":[
+            "{{fields.k8sCluster}}_{{fields.project}}_{{docker.container.labels.io.kubernetes.pod.name}}"
+          ]
+        }
+      }
+    ],
+    "on_failure":[
+      {
+        "set":{
+          "field":"_index",
+          "value":"failed-{{ _index }}"
+        }
+      }
+    ]
+  },
+  "log-timestamp-appname": {
+    "description": "timestamp app name pipeline",
+    "processors": [
+      {
+        "grok": {
+          "field": "message",
+          "patterns": [
+            "%{TIMESTAMP_ISO8601:timestamp} "
+          ]
+        },
+        "remove": {
+          "field": "@timestamp"
+        }
+      },
+      {
+        "date": {
+          "field": "timestamp",
+          "formats": [
+            "yyyy-MM-dd HH:mm:ss.SSS"
+          ],
+          "timezone": "Asia/Shanghai"
+        },
+        "remove": {
+          "field": "timestamp"
+        }
+      },
+      {
+        "grok": {
+          "field": "source",
+          "patterns": [
+            "%{APPNAME:app}\\/[^\\/]+$"
+          ],
+          "pattern_definitions": {
+            "APPNAME": "[^\\/]+"
+          }
+        }
+      }
+    ],
+    "on_failure": [
+      {
+        "set": {
+          "field": "_index",
+          "value": "failed-{{ _index }}"
+        }
+      }
+    ]
+  },
+  "k8s-app-name": {
+    "description": "k8s pod app name pipeline",
+    "processors": [
+      {
+        "grok": {
+          "field": "kubernetes.pod.name",
+          "patterns": [
+            "%{DATA:app}-(?:app-)?v\\d.*"
+          ]
+        }
+      }
+    ],
+    "on_failure": [
+      {
+        "set": {
+          "field": "_index",
+          "value": "failed-{{ _index }}"
+        }
+      }
+    ]
+  },
+  "docker-app-name": {
+    "description":"docker app name pipeline",
+    "processors":[
+      {
+        "grok":{
+          "field":"docker.container.name",
+          "patterns":[
+            "^\\d+_\\d+_%{NOTSPACE:fields.app}"
+          ]
+        }
+      },
+      {
+        "set":{
+          "field":"fields.instance",
+          "value":[
+            "{{fields.app}}_{{fields.ip}}"
+          ]
+        }
+      }
+    ],
+    "on_failure":[
+      {
+        "set":{
+          "field":"_index",
+          "value":"failed-{{ _index }}"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+1、 变量是双括号 比如set processor
+2、docker 时区转换
+{
+    "pipeline":{
+        "description":"docker timezone pipeline",
+        "processors":[
+            {
+                "date":{
+                    "field":"@timestamp",
+                    "target_field":"@timestamp",
+                    "timezone":"Asia/Shanghai",
+                    "formats":[
+                        "ISO8601"
+                    ],
+                    "ignore_failure":false
+                }
+            }
+        ]
+    },
+    "docs":[
+        {
+            "_index":"filebeat-2018.10.24",
+            "_type":"doc",
+            "_id":"AWalTsataupqK_iFk50M",
+            "_version":1,
+            "_score":null,
+            "_source":{
+                "input":{
+                    "type":"docker"
+                },
+                "@timestamp":"2018-10-24T23:43:04.265Z",
+                "stream":"stdout",
+                "fields":{
+                    "app":"HSISP-STOCK",
+                    "instance":"332_1590_HSISP-STOCK",
+                    "project":"hsirrfw",
+                    "type":"docker"
+                }
+            }
+        }
+    ]
+}

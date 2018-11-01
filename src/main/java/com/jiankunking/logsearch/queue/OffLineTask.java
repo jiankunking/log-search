@@ -1,5 +1,6 @@
 package com.jiankunking.logsearch.queue;
 
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jiankunking.logsearch.config.EnvionmentVariables;
 import com.jiankunking.logsearch.model.offline.OffLineLogMetaData;
@@ -23,6 +24,8 @@ public class OffLineTask {
 
     @Autowired
     OffLineLogDownloadService offLineLogDownloadService;
+    @Autowired
+    PoolSizeService poolSizeService;
 
     /**
      * 添加下载任务到 阻塞队列
@@ -51,7 +54,7 @@ public class OffLineTask {
             return;
         }
         new Thread(() -> {
-            int poolSize = Runtime.getRuntime().availableProcessors() * 5;
+            int poolSize = poolSizeService.getOffLineTaskPoolSize();
             log.info("OffLineTask poolSize:" + Integer.toString(poolSize));
             ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                     .setNameFormat("OffLineTask-pool").build();

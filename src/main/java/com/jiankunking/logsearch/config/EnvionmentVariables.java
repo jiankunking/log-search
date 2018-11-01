@@ -10,10 +10,7 @@ import org.apache.http.HttpHost;
  * @description:
  */
 public class EnvionmentVariables {
-    ///**
-    // * 10.238.116.108:9200,10.238.116.109:9200,10.238.116.110:9200
-    // */
-    //public static String ES_URL;
+
     /**
      * consul host
      */
@@ -22,11 +19,6 @@ public class EnvionmentVariables {
      * consul port
      */
     public static int CONSUL_PORT = 8500;
-
-    /**
-     * 索引前缀
-     */
-    //public static String INDEX_PREFIX = "filebeat-*";
 
     /**
      * ansible 拓展 接口
@@ -47,7 +39,7 @@ public class EnvionmentVariables {
      */
     public static int ON_LINE_DOWNLOAD_SIZE = 10 * 10000;
     /**
-     * filebeat 下载地址   "10.138.16.192:8081"
+     * filebeat 下载地址   "127.0.0.1:8081"
      */
     public static String FILEBEAT_DOWNLOAD_URL;
 
@@ -82,6 +74,10 @@ public class EnvionmentVariables {
      * 卸载filebeat playbook版本
      */
     public static final String UNINSTALL_FILEBEAT_PLAYBOOK_VERSION = "v0.0.1";
+    /**
+     * 由直接从k8s读取集群信息 修改为从配置中心读取
+     */
+    public static String CMDB_URL;
 
 
     /**

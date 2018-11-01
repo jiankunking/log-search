@@ -22,6 +22,8 @@ public class ZipTask {
 
     @Autowired
     OffLineLogDownloadService offLineLogDownloadService;
+    @Autowired
+    PoolSizeService poolSizeService;
 
     /**
      * 添加下载任务到 阻塞队列
@@ -49,10 +51,7 @@ public class ZipTask {
             return;
         }
         new Thread(() -> {
-            int poolSize = 1;
-            if (Runtime.getRuntime().availableProcessors() >= 6) {
-                poolSize = Runtime.getRuntime().availableProcessors() / 3;
-            }
+            int poolSize = poolSizeService.getZipTaskPoolSize();
             log.info("ZipTask poolSize:" + Integer.toString(poolSize));
 
             ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()

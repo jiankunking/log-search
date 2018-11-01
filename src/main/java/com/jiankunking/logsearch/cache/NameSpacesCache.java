@@ -1,19 +1,14 @@
 package com.jiankunking.logsearch.cache;
 
-import com.jiankunking.logsearch.util.ResourceRenderer;
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.Configuration;
-import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.models.V1Namespace;
-import io.kubernetes.client.models.V1NamespaceList;
-import io.kubernetes.client.util.Config;
+import com.jiankunking.logsearch.cache.k8s.KubernetesTenants;
+import com.jiankunking.logsearch.model.k8s.Cluster;
+import com.jiankunking.logsearch.model.k8s.Kubernetes;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,59 +24,43 @@ import java.util.List;
 @Component
 public class NameSpacesCache {
 
-    /**
-     * tenant
-     * ------ namespace
-     */
-    private static HashMap<String, List<String>> tenants = new HashMap<>();
-    private ApiClient client = null;
-    private CoreV1Api api = null;
 
+    @Autowired
+    KubernetesTenants kubernetesTenants;
+
+
+    private static HashMap<String, Kubernetes> tenants = new HashMap<>();
 
     /**
      * 每小时执行一次
      * 测试每五秒执行一次：0/5 * * * * ?
      */
     @Scheduled(cron = "0 0 * * * ?")
-    public void init() throws IOException, ApiException {
+    public void init() throws IOException {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("NameSpacesCache init:" + df.format(new Date()));
-        if (api == null) {
-            String fileName = "classpath:/k8s/kubectl.kubeconfig";
-            InputStream inputStream = ResourceRenderer.resourceLoader(fileName);
-            client = Config.fromConfig(inputStream);
-            // 五分钟
-            client.setConnectTimeout(5 * 60 * 1000);
-            Configuration.setDefaultApiClient(client);
-            api = new CoreV1Api();
-        }
-        V1NamespaceList v1NamespaceList = api.listNamespace(null, null, null,
-                null, null, 1000,
-                null, null, Boolean.FALSE);
-        HashMap<String, List<String>> tempTenants = new HashMap<>(50);
-        String clusterName, namespace;
-        String key = "tenant.tenant.test.io";
-        for (V1Namespace item : v1NamespaceList.getItems()) {
-            if (item.getMetadata() == null || item.getMetadata().getLabels() == null) {
-                continue;
-            }
-            if (!item.getMetadata().getLabels().containsKey(key)) {
-                continue;
-            }
-            clusterName = item.getMetadata().getLabels().get(key);
-            namespace = item.getMetadata().getName();
-            if (tempTenants.containsKey(clusterName)) {
-                tempTenants.get(clusterName).add(namespace);
-            } else {
-                List<String> nameSpaces = new ArrayList<>();
-                nameSpaces.add(namespace);
-                tempTenants.put(clusterName, nameSpaces);
-            }
-        }
-        tenants = tempTenants;
+        tenants = kubernetesTenants.getTenants();
+        System.out.println("NameSpacesCache init finish:" + df.format(new Date()));
+
     }
 
-    public List<String> getNameSpaces(String project) {
-        return tenants.get(project);
+    public List<Cluster> getClusters(String project) {
+        if (!tenants.containsKey(project)) {
+            return null;
+        }
+        List<Cluster> clusterList = new ArrayList<>();
+        Kubernetes kubernetes = tenants.get(project);
+        for (String clusterName : kubernetes.getClusters().keySet()) {
+            Cluster cluster = new Cluster();
+            cluster.setCluster(clusterName);
+            List<String> namespaces = new ArrayList<>();
+            for (String namespace : kubernetes.getClusters().get(clusterName)) {
+                namespaces.add(namespace.toLowerCase());
+            }
+            cluster.setNamespaces(namespaces);
+            clusterList.add(cluster);
+        }
+
+        return clusterList;
     }
 }

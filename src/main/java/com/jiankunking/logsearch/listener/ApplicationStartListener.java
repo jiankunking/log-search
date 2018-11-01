@@ -6,7 +6,6 @@ import com.jiankunking.logsearch.client.ESClients;
 import com.jiankunking.logsearch.config.EnvionmentVariables;
 import com.jiankunking.logsearch.queue.OffLineTask;
 import com.jiankunking.logsearch.queue.ZipTask;
-import io.kubernetes.client.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -56,7 +55,7 @@ public class ApplicationStartListener implements ApplicationListener<ContextRefr
 
         } catch (UnsupportedEncodingException e) {
             log.error("initAllESClients error:", e);
-        } catch (ApiException | IOException e) {
+        } catch (IOException e) {
             log.error("nameSpacesCache init error:", e);
         }
 

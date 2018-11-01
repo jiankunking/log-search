@@ -27,7 +27,7 @@ public class LogSearchApplication {
         String ansibleExtUrl = "ANSIBLE_EXT_URL";
         String filebeatDownloadURL = "FILEBEAT_DOWNLOAD_URL";
         String onLineDownloadSize = "ON_LINE_DOWNLOAD_SIZE";
-        //String indexPrefix = "INDEX_PREFIX";
+        String cmdbURL = "CMDB_URL";
         String fileBeatVersion = "FILEBEAT_VERSION";
         String offLineLogDownloadPath = "OFF_LINE_LOG_DOWNLOAD_PATH";
         String enableOfflineDownloadFunction = "ENABLE_OFFLINE_DOWNLOAD_FUNCTION";
@@ -77,6 +77,16 @@ public class LogSearchApplication {
         }
         EnvionmentVariables.FILEBEAT_VERSION = envs.get(fileBeatVersion);
         log.info("FILEBEAT_VERSION:" + EnvionmentVariables.FILEBEAT_VERSION);
+
+
+        //cmdb 地址
+        if (StringUtils.isEmpty(envs.get(cmdbURL))) {
+            log.info("CMDB_URL must have value!");
+            return;
+        } else {
+            EnvionmentVariables.CMDB_URL = envs.get(cmdbURL);
+        }
+        log.info("CMDB_URL:" + EnvionmentVariables.CMDB_URL);
 
         //日志下载最大量限制
         if (!StringUtils.isEmpty(envs.get(onLineDownloadSize))) {

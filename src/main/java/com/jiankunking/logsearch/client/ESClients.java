@@ -8,7 +8,9 @@ import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
 import com.jiankunking.logsearch.services.ConsulService;
 import com.jiankunking.logsearch.util.MapUtils;
+import org.apache.http.client.config.RequestConfig;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +31,16 @@ public class ESClients {
      * 超时时间设为2分钟
      */
     private static int Maximum_Timeout = 2 * 60 * 1000;
+    /**
+     * es client 链接超时
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/_timeouts.html
+     */
+    private static int CONNECT_TIMEOUT = 60 * 1000;
+    /**
+     * es client socket超时
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/_timeouts.html
+     */
+    private static int SOCKET_TIMEOUT = 2 * 60 * 1000;
 
     private ESClients() {
     }
@@ -89,10 +101,7 @@ public class ESClients {
     public static void initAllESClients() throws UnsupportedEncodingException {
         List<ESCluster> esClusters = consulService.getAllESClusters(EnvionmentVariables.ES_EXT_DEPLOY_LOCATION);
         for (ESCluster esCluster : esClusters) {
-            RestClient restClient = RestClient
-                    .builder(EnvionmentVariables.getHttpHostArray(esCluster.getAddress()))
-                    .setMaxRetryTimeoutMillis(Maximum_Timeout)
-                    .build();
+            RestClient restClient = getNewRestClient(esCluster.getAddress());
             if (ESClientLRUCacheSingleton.INSTANCE.esClientLRUCache.get(esCluster.getProject()) != null) {
                 ESClientLRUCacheSingleton.INSTANCE.esClientLRUCache.get(esCluster.getProject()).put(esCluster.getName(), restClient);
             } else {
@@ -107,10 +116,7 @@ public class ESClients {
         int size = MapUtils.getSize(esClusters.size());
         ConcurrentMap<String, RestClient> items = new ConcurrentHashMap<>(size);
         for (ESCluster esCluster : esClusters) {
-            RestClient restClient = RestClient
-                    .builder(EnvionmentVariables.getHttpHostArray(esCluster.getAddress()))
-                    .setMaxRetryTimeoutMillis(Maximum_Timeout)
-                    .build();
+            RestClient restClient = getNewRestClient(esCluster.getAddress());
             items.put(esCluster.getName(), restClient);
         }
         ESClientLRUCacheSingleton.INSTANCE.esClientLRUCache.put(project, items);
@@ -118,10 +124,7 @@ public class ESClients {
 
     private static void initESClient(String project, String cluster) throws UnsupportedEncodingException, ESClusterNotFoundException {
         ESCluster esCluster = consulService.getESCluster(project, cluster);
-        RestClient restClient = RestClient
-                .builder(EnvionmentVariables.getHttpHostArray(esCluster.getAddress()))
-                .setMaxRetryTimeoutMillis(Maximum_Timeout)
-                .build();
+        RestClient restClient = getNewRestClient(esCluster.getAddress());
         ESClientLRUCacheSingleton.INSTANCE.esClientLRUCache.get(project).put(cluster, restClient);
     }
 
@@ -135,6 +138,21 @@ public class ESClients {
                 }
             }
         }
+    }
+
+    private static RestClient getNewRestClient(String esAddress) {
+        RestClient restClient = RestClient
+                .builder(EnvionmentVariables.getHttpHostArray(esAddress))
+                .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+                    @Override
+                    public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
+                        return requestConfigBuilder.setConnectTimeout(CONNECT_TIMEOUT)
+                                .setSocketTimeout(SOCKET_TIMEOUT);
+                    }
+                })
+                .setMaxRetryTimeoutMillis(Maximum_Timeout)
+                .build();
+        return restClient;
     }
 
     /**

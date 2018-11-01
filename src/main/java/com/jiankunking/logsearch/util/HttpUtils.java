@@ -32,7 +32,19 @@ public class HttpUtils {
                 .url(url)
                 .post(body)
                 .build();
-        okhttp3.Response response = client.newCall(request).execute();
-        return response;
+        if (client != null) {
+            return client.newCall(request).execute();
+        }
+        return okHttpClient.newCall(request).execute();
+    }
+
+    public okhttp3.Response get(String url, OkHttpClient client) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        if (client != null) {
+            return client.newCall(request).execute();
+        }
+        return okHttpClient.newCall(request).execute();
     }
 }

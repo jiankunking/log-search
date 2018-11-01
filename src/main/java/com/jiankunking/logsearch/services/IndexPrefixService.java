@@ -37,7 +37,7 @@ public class IndexPrefixService {
             //fromDate toDate相同时 不拼接*
             prefix = prefix + commonPrefix;
         }
-        log.info("IndexPrefix:" + prefix);
+        //log.info("IndexPrefix:" + prefix);
         return prefix;
 
     }

@@ -2,6 +2,7 @@ package com.jiankunking.logsearch.services;
 
 
 import com.jiankunking.logsearch.cache.NameSpacesCache;
+import com.jiankunking.logsearch.model.k8s.Cluster;
 import com.jiankunking.logsearch.util.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -27,18 +28,22 @@ public class ESFilterService {
      */
     public void addProjectFilter(String project, BoolQueryBuilder boolQueryBuilder) {
         if (StringUtils.isNotEmpty(project)) {
-            List<String> namespaces = nameSpacesCache.getNameSpaces(project);
-            if (namespaces == null) {
+            List<Cluster> clusters = nameSpacesCache.getClusters(project);
+            if (clusters == null) {
                 boolQueryBuilder.must(QueryBuilders.termQuery("fields.project", project));
             } else {
+                // k8s 是使用namespace来充当的project
                 boolQueryBuilder.should(QueryBuilders.termQuery("fields.project", project));
-                for (String namespace : namespaces) {
-                    if (namespace.equalsIgnoreCase(project)) {
-                        continue;
+                for (Cluster cluster : clusters) {
+                    boolQueryBuilder.should(QueryBuilders.termQuery("fields.k8sCluster", cluster.getCluster()));
+                    for (String namespace : cluster.getNamespaces()) {
+                        if (namespace.equalsIgnoreCase(project)) {
+                            continue;
+                        }
+                        boolQueryBuilder.should(QueryBuilders.termQuery("fields.project", namespace));
                     }
-                    boolQueryBuilder.should(QueryBuilders.termQuery("fields.project", namespace));
                 }
-                boolQueryBuilder.minimumShouldMatch(1);
+                boolQueryBuilder.minimumShouldMatch(2);
             }
         }
     }

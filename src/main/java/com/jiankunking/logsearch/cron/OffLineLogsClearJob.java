@@ -23,10 +23,10 @@ import java.util.List;
 public class OffLineLogsClearJob {
 
     /**
-     * 每天凌晨2点 启动
+     * 每小时执行一次
      * 测试每五秒执行一次：0/5 * * * * ?
      */
-    //@Scheduled(cron = "0 0 2 1 * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     @Scheduled(cron = "0 0 * * * ?")
     public void clearOldFiles() throws IOException {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -40,6 +40,13 @@ public class OffLineLogsClearJob {
             //兼容window路径
             if (names.length == 1) {
                 names = dir.split("\\\\");
+            }
+            // 屏蔽掉 /data/offline/logs/hsirrfw 项目下没有日志的部分
+            // /data/offline/logs/hsirrfw/1540367809245
+            if (names.length == 5) {
+                log.info(dir);
+                FileUtils.deleteDirectory(new File(dir));
+                continue;
             }
             //大于7天 删除文件目录
             if (System.currentTimeMillis() - Long.valueOf(names[names.length - 1]) >= diff) {

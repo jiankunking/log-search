@@ -1,6 +1,7 @@
 package com.jiankunking.logsearch.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jiankunking.logsearch.aspect.ControllerTimeAnnotation;
 import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.dto.SearchResult;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -80,23 +82,11 @@ public class LogSearchController implements IApiVersion {
             result = logSearchService.queryStringByKeyWord(cluster, project, keyword, app, instance, null, null, pageSize, fromTime, toTime, searchAfterValues, SortOrder.DESC);
         }
         for (Map<String, Object> item : result.getItems()) {
-            SearchIDEntity searchIDEntity = new SearchIDEntity();
-            searchIDEntity.setDocID(String.valueOf(item.get("id")));
-            searchIDEntity.setOffset(Integer.valueOf(String.valueOf(item.get("offset"))));
-            searchIDEntity.setTimeStampSort(ObjectUtils.objectToLong(item.get("time")));
-            item.put("id", Base64Utils.encoder(JsonUtils.toJSON(searchIDEntity)));
-            item.put("project", project);
+            this.addStartID(item, project);
         }
         //升序 排序（时间越新 越在下面）
         Collections.sort(result.getItems(), (o1, o2) -> {
-            long map1time = Long.parseLong(o1.get("time").toString());
-            long map2time = Long.parseLong(o2.get("time").toString());
-            if (map1time != map2time) {
-                return (int) (map1time - map2time);
-            }
-            int map1offset = (int) o1.get("offset");
-            int map2offset = (int) o2.get("offset");
-            return (map1offset - map2offset);
+            return this.mapCompare(o1, o2);
         });
         ResponseUtils.handleReqJson(response, HttpServletResponse.SC_OK, result);
     }
@@ -194,12 +184,7 @@ public class LogSearchController implements IApiVersion {
 
         SearchResult searchResult = SearchResult.mergeSearchResults(searchResultList);
         for (Map<String, Object> item : searchResult.getItems()) {
-            SearchIDEntity temp = new SearchIDEntity();
-            temp.setDocID(String.valueOf(item.get("id")));
-            temp.setOffset(Integer.valueOf(String.valueOf(item.get("offset"))));
-            temp.setTimeStampSort(ObjectUtils.objectToLong(item.get("time")));
-            item.put("id", Base64Utils.encoder(JsonUtils.toJSON(temp)));
-            item.put("project", project);
+            this.addStartID(item, project);
         }
         //afterlines 移除当前行
         if (afterLinesAdjust > 1 && !finish) {
@@ -208,9 +193,7 @@ public class LogSearchController implements IApiVersion {
 
         //升序 排序（时间越新 越在下面）
         Collections.sort(searchResult.getItems(), (o1, o2) -> {
-            int map1value = (int) o1.get("offset");
-            int map2value = (int) o2.get("offset");
-            return map1value - map2value;
+            return this.mapCompare(o1, o2);
         });
         ResponseUtils.handleReqJson(response, HttpServletResponse.SC_OK, searchResult);
     }
@@ -223,6 +206,32 @@ public class LogSearchController implements IApiVersion {
                 return;
             }
         }
+    }
+
+    private int mapCompare(Map<String, Object> o1, Map<String, Object> o2) {
+        long map1time = Long.parseLong(o1.get("time").toString());
+        long map2time = Long.parseLong(o2.get("time").toString());
+        if (map1time != map2time) {
+            return (int) (map1time - map2time);
+        }
+        int map1offset = (int) o1.get("offset");
+        int map2offset = (int) o2.get("offset");
+        if (map1offset != map2offset) {
+            return (map1offset - map2offset);
+        }
+        String map1docID = (String) o1.get("docID");
+        String map2docID = (String) o2.get("docID");
+        return map1docID.compareTo(map2docID);
+    }
+
+    private void addStartID(Map<String, Object> item, String project) throws JsonProcessingException, UnsupportedEncodingException {
+        SearchIDEntity temp = new SearchIDEntity();
+        temp.setDocID(String.valueOf(item.get("id")));
+        temp.setOffset(Integer.valueOf(String.valueOf(item.get("offset"))));
+        temp.setTimeStampSort(ObjectUtils.objectToLong(item.get("time")));
+        item.put("docID", String.valueOf(item.get("id")));
+        item.put("id", Base64Utils.encoder(JsonUtils.toJSON(temp)));
+        item.put("project", project);
     }
 
     //@TimeAnnotation

@@ -62,7 +62,7 @@ public class OffLineTask {
             //Common Thread Pool
             ExecutorService pool = new ThreadPoolExecutor(poolSize, poolSize,
                     0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(100), namedThreadFactory, new AwaitPolicy());
+                    new LinkedBlockingQueue<>(100), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
             OffLineLogMetaData offLineLogMetaData = null;
             while (true) {
                 try {

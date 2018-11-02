@@ -32,10 +32,11 @@ public class NameSpacesCache {
     private static HashMap<String, Kubernetes> tenants = new HashMap<>();
 
     /**
-     * 每小时执行一次
-     * 测试每五秒执行一次：0/5 * * * * ?
+     *  每小时执行一次
+     *  测试每五秒执行一次：0/5 * * * * ?
      */
-    @Scheduled(cron = "0 0 * * * ?")
+    //@Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 5 * * * ?")
     public void init() throws IOException {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("NameSpacesCache init:" + df.format(new Date()));

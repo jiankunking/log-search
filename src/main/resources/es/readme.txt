@@ -31,9 +31,9 @@
                 "@timestamp":"2018-10-24T23:43:04.265Z",
                 "stream":"stdout",
                 "fields":{
-                    "app":"HSISP-STOCK",
-                    "instance":"332_1590_HSISP-STOCK",
-                    "project":"hsirrfw",
+                    "app":"test1-STOCK",
+                    "instance":"332_1590_test1-STOCK",
+                    "project":"test",
                     "type":"docker"
                 }
             }

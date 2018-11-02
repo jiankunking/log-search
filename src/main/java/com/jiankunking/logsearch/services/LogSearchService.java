@@ -131,7 +131,7 @@ public class LogSearchService {
 
         sourceBuilder.size(pageSize).query(boolQueryBuilder);
         String queryJson = sourceBuilder.toString();
-        log.info(queryJson);
+        //log.info(queryJson);
         String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(fromTime, toTime)), queryJson);
 
         Map responseMap = (Map) JSON.parse(resultJson);

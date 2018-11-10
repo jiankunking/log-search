@@ -7,8 +7,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 /**
  * @author jiankunking.
  * @date：2018/9/28 14:57
@@ -31,10 +29,9 @@ public class MethodTimeConsumeAspect {
         long end = System.currentTimeMillis();
         String signature = joinPoint.getSignature().toString();
         String methodName = signature.substring(signature.lastIndexOf(".") + 1, signature.indexOf("("));
-        log.info(String.format("%s  %s  %d ms",
-                new Date(),
-                methodName,
-                end - start));
+        log.info(String.format("%dms %s",
+                end - start,
+                methodName));
         return obj;
     }
 }

@@ -1,5 +1,6 @@
 package com.jiankunking.logsearch.aspect;
 
+import com.jiankunking.logsearch.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 /**
  * @author jiankunking.
@@ -37,13 +37,16 @@ public class ControllerTimeConsumeAspect {
         ServletRequestAttributes servletContainer = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = servletContainer.getRequest();
         HttpServletResponse response = servletContainer.getResponse();
+        String uri = request.getRequestURI();
+        if (StringUtils.isNotEmpty(request.getQueryString())) {
+            uri = uri + "?" + request.getQueryString();
+        }
 
-        log.info(String.format("%s  %s  %d  %s  %d ms",
-                new Date(),
+        log.info(String.format("%s  %d %dms %s",
                 request.getMethod(),
                 response.getStatus(),
-                request.getRequestURI(),
-                end - start));
+                end - start,
+                uri));
         return obj;
     }
 

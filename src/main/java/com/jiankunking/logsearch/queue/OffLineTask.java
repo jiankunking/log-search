@@ -18,27 +18,15 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Component
-public class OffLineTask {
+public class OffLineTask implements IQueue<OffLineLogMetaData> {
 
     private static BlockingQueue<OffLineLogMetaData> taskQueue = new LinkedBlockingQueue<>(10000);
+    private static volatile boolean initialized = false;
 
     @Autowired
     OffLineLogDownloadService offLineLogDownloadService;
     @Autowired
     PoolSizeService poolSizeService;
-
-    /**
-     * 添加下载任务到 阻塞队列
-     *
-     * @param offLineLogMetaData
-     */
-    public static void addTaskToBlockingQueue(OffLineLogMetaData offLineLogMetaData) {
-        if (offLineLogMetaData == null) {
-            return;
-        }
-        taskQueue.add(offLineLogMetaData);
-        log.info("OffLineTask taskQueue size:" + taskQueue.size());
-    }
 
     public static int getOffLineTaskSize() {
         return taskQueue.size();
@@ -53,6 +41,11 @@ public class OffLineTask {
         if (!EnvionmentVariables.ENABLE_OFFLINE_DOWNLOAD_FUNCTION) {
             return;
         }
+        if (initialized) {
+            log.info("OffLineTask Repeated initialization");
+            return;
+        }
+        initialized = true;
         new Thread(() -> {
             int poolSize = poolSizeService.getOffLineTaskPoolSize();
             log.info("OffLineTask poolSize:" + Integer.toString(poolSize));
@@ -76,4 +69,17 @@ public class OffLineTask {
         }).start();
     }
 
+    /**
+     * 添加下载任务到 阻塞队列
+     *
+     * @param item
+     */
+    @Override
+    public void add(OffLineLogMetaData item) {
+        if (item == null) {
+            return;
+        }
+        taskQueue.add(item);
+        log.info("OffLineTask taskQueue size:" + taskQueue.size());
+    }
 }

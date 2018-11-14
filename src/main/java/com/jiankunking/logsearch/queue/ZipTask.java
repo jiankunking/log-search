@@ -17,26 +17,14 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Component
-public class ZipTask {
+public class ZipTask implements IQueue<String> {
     private static BlockingQueue<String> taskQueue = new LinkedBlockingQueue<>(10000);
+    private static volatile boolean initialized = false;
 
     @Autowired
     OffLineLogDownloadService offLineLogDownloadService;
     @Autowired
     PoolSizeService poolSizeService;
-
-    /**
-     * 添加下载任务到 阻塞队列
-     *
-     * @param fileFullPath
-     */
-    public static void addTaskToBlockingQueue(String fileFullPath) {
-        if (StringUtils.isEmpty(fileFullPath)) {
-            return;
-        }
-        taskQueue.add(fileFullPath);
-        log.info("ZipTask taskQueue size:" + taskQueue.size());
-    }
 
     public static int getZipTaskSize() {
         return taskQueue.size();
@@ -50,6 +38,11 @@ public class ZipTask {
         if (!EnvionmentVariables.ENABLE_OFFLINE_DOWNLOAD_FUNCTION) {
             return;
         }
+        if (initialized) {
+            log.info("ZipTask Repeated initialization");
+            return;
+        }
+        initialized = true;
         new Thread(() -> {
             int poolSize = poolSizeService.getZipTaskPoolSize();
             log.info("ZipTask poolSize:" + Integer.toString(poolSize));
@@ -72,5 +65,19 @@ public class ZipTask {
                 pool.execute(() -> offLineLogDownloadService.zipLog(tempFileFullPath));
             }
         }).start();
+    }
+
+    /**
+     * 添加下载任务到 阻塞队列
+     *
+     * @param item
+     */
+    @Override
+    public void add(String item) {
+        if (StringUtils.isEmpty(item)) {
+            return;
+        }
+        taskQueue.add(item);
+        log.info("ZipTask taskQueue size:" + taskQueue.size());
     }
 }

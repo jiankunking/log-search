@@ -48,6 +48,9 @@ public class OffLineLogDownloadController implements IApiVersion {
     @Autowired
     OffLineLogDownloadService offLineLogDownloadService;
 
+    @Autowired
+    OffLineTask offLineTask;
+
 
     @ControllerTimeAnnotation
     @RequestMapping(method = RequestMethod.GET, value = "/clusters/{cluster}/projects/{project}/apps/{app}/instances/{instance}/keyword/offline_download")
@@ -99,7 +102,7 @@ public class OffLineLogDownloadController implements IApiVersion {
         }
         //创建文件
         FileUtils.writeStringToFile(new File(fileFullPath + GlobalConfig.JSON_FILE_SUFFIX), JsonUtils.toJSON(offLineLogMetaData), GlobalConfig.CHARSET);
-        OffLineTask.addTaskToBlockingQueue(offLineLogMetaData);
+        offLineTask.add(offLineLogMetaData);
         ResponseUtils.handleReqJson(response, HttpServletResponse.SC_OK, null);
     }
 
@@ -156,7 +159,7 @@ public class OffLineLogDownloadController implements IApiVersion {
             }
             //创建文件
             FileUtils.writeStringToFile(new File(fileFullPath + GlobalConfig.JSON_FILE_SUFFIX), JsonUtils.toJSON(offLineLogMetaData), GlobalConfig.CHARSET);
-            OffLineTask.addTaskToBlockingQueue(offLineLogMetaData);
+            offLineTask.add(offLineLogMetaData);
         } else {
             throw new IllegalArgumentException(" Instance is not allowed to be empty at the same time ");
         }

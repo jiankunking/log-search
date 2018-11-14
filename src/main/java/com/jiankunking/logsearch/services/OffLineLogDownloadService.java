@@ -38,6 +38,8 @@ public class OffLineLogDownloadService {
     LogDownloadService logDownloadService;
     @Autowired
     OffLineMetadataService offLineMetadataService;
+    @Autowired
+    ZipTask zipTask;
 
     private int pageSize = 1000;
 
@@ -51,7 +53,7 @@ public class OffLineLogDownloadService {
             this.downloadByKeyWord(queryCondition.getCluster(), queryCondition.getProject(), queryCondition.getKeyword(), queryCondition.getApp(),
                     queryCondition.getInstance(), queryCondition.getHostID(), queryCondition.getSource(), queryCondition.getFromTime(), queryCondition.getToTime(), fileFullPath);
             offLineMetadataService.updateTaskState(fileFullPath, DownLoadStatusEnum.ziping);
-            ZipTask.addTaskToBlockingQueue(fileFullPath);
+            zipTask.add(fileFullPath);
         } catch (NoSuchAlgorithmException | ESClientNotFoundException | IOException | ESClusterNotFoundException e) {
             offLineMetadataService.updateTaskState(fileFullPath, DownLoadStatusEnum.fail);
             log.error("downloadByKeyWord", e);

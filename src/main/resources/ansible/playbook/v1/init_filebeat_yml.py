@@ -62,8 +62,8 @@ agent_parameters = ' -e -c /etc/filebeat/filebeat.yml -d "publish"'
 
 temp = ['[Unit] ', lineBreak, 'Description=filebeat', lineBreak]
 if args.type == "docker" or args.type == "k8s":
-    temp.extend(['Requires=docker', lineBreak])
-    temp.extend(['After=docker', lineBreak])
+    temp.extend(['After=docker.service', lineBreak])
+    temp.extend(['Wants=docker.service', lineBreak])
 
 temp.extend(['[Service]', lineBreak,
              'User=root', lineBreak,

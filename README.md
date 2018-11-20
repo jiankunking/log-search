@@ -6,6 +6,7 @@
 2. **支持检索日志上下文** 
 3. **支持日志下载（在线、离线）** 
 4. **支持通过ansible-ext部署filebeat**
+5. **支持多elasticsearch集群**
 
 
  <h1 class="curproject-name"> log-search </h1> 

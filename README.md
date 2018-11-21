@@ -2,11 +2,13 @@
 [https://blog.csdn.net/jiankunking/article/details/81806573](https://blog.csdn.net/jiankunking/article/details/81806573)
 
 # 支持功能 #
-1. **支持检索filebeat收集到elasticsearch中的日志信息** 
-2. **支持检索日志上下文** 
+1. **支持检索filebeat收集到elasticsearch中的日志信息(可以根据业务中项目、应用、实例的维度进行选择检索、下载)** 
+2. **支持查看、下载日志上下文** 
 3. **支持日志下载（在线、离线）** 
-4. **支持通过ansible-ext部署filebeat**
-5. **支持多elasticsearch集群**
+4. **支持通过ansible-ext部署filebeat,部署过程、进度可视化**
+5. **单实例支持多elasticsearch集群检索、下载**
+6. **打通多来源日志与业务中项目、应用、实例的映射关系**
+7. **支持Elasticsearch Query String查询**
 
 
  <h1 class="curproject-name"> log-search </h1> 

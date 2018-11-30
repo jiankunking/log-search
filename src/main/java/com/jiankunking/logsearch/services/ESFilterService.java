@@ -9,6 +9,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,12 +35,18 @@ public class ESFilterService {
             } else {
                 // k8s 是使用namespace来充当的project
                 boolQueryBuilder.should(QueryBuilders.termQuery("fields.project", project));
+                //去重
+                HashMap<String, Object> map = new HashMap<>(10);
                 for (Cluster cluster : clusters) {
                     boolQueryBuilder.should(QueryBuilders.termQuery("fields.k8sCluster", cluster.getCluster()));
                     for (String namespace : cluster.getNamespaces()) {
                         if (namespace.equalsIgnoreCase(project)) {
                             continue;
                         }
+                        if (map.containsKey(namespace)) {
+                            continue;
+                        }
+                        map.put(namespace, null);
                         boolQueryBuilder.should(QueryBuilders.termQuery("fields.project", namespace));
                     }
                 }

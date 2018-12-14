@@ -78,6 +78,11 @@ public class EnvionmentVariables {
      * 由直接从k8s读取集群信息 修改为从配置中心读取
      */
     public static String CMDB_URL;
+    /**
+     * 需要考虑每条日志大小
+     * 如果平均日志大小过大，会导致每次查询的数据都落入老年代，造成GC压力
+     */
+    public static int DOWNLOAD_PAGE_SIZE = 100;
 
 
     /**

@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.jiankunking.logsearch.config.EnvionmentVariables.DOWNLOAD_PAGE_SIZE;
+
 /**
  * @author jiankunking.
  * @date：2018/8/17 10:05
@@ -41,8 +43,6 @@ public class LogDownloadService {
     ESFilterService esFilterService;
     @Autowired
     IndexPrefixService indexPrefixService;
-
-    private int pageSize = 1000;
 
     public void downloadByKeyWord(String cluster, String project, String keyWord, String app, String instance,
                                   String hostID, String source,
@@ -65,7 +65,7 @@ public class LogDownloadService {
         }
 
         OutputStream outputStream = res.getOutputStream();
-        int cycleIndex = IntUtils.getCycleCount(total, pageSize);
+        int cycleIndex = IntUtils.getCycleCount(total, DOWNLOAD_PAGE_SIZE);
         log.info("cycleIndex: " + cycleIndex);
         Object[] searchAfterValues;
         SearchIDEntity searchIDEntity;

@@ -34,6 +34,7 @@ public class LogSearchApplication {
         String offlineDownloadServer = "OFFLINE_DOWNLOAD_SERVER";
         String offlineDownloadServerPort = "OFFLINE_DOWNLOAD_SERVER_PORT";
         String esExtDeployLocation = "ES_EXT_DEPLOY_LOCATION";
+        String downloadPageSize = "DOWNLOAD_PAGE_SIZE";
 
         Map<String, String> envs = System.getenv();
 
@@ -129,6 +130,12 @@ public class LogSearchApplication {
             }
             log.info("OFFLINE_DOWNLOAD_SERVER_PORT:" + EnvionmentVariables.OFFLINE_DOWNLOAD_SERVER_PORT);
         }
+
+        //日志下载 每次获取条数
+        if (!StringUtils.isEmpty(envs.get(downloadPageSize))) {
+            EnvionmentVariables.DOWNLOAD_PAGE_SIZE = Integer.valueOf(envs.get(downloadPageSize));
+        }
+        log.info("DOWNLOAD_PAGE_SIZE:" + EnvionmentVariables.DOWNLOAD_PAGE_SIZE);
 
         SpringApplication.run(LogSearchApplication.class, args);
     }

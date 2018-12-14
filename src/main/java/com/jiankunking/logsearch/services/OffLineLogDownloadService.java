@@ -23,6 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.jiankunking.logsearch.config.EnvionmentVariables.DOWNLOAD_PAGE_SIZE;
+
 /**
  * @author jiankunking.
  * @date：2018/9/28 18:22
@@ -40,8 +42,6 @@ public class OffLineLogDownloadService {
     OffLineMetadataService offLineMetadataService;
     @Autowired
     ZipTask zipTask;
-
-    private int pageSize = 1000;
 
     public void downloadByKeyWord(OffLineLogMetaData offLineLogMetaData) {
         QueryCondition queryCondition = offLineLogMetaData.getQueryCondition();
@@ -88,20 +88,20 @@ public class OffLineLogDownloadService {
         }
         //记录总条数及下载状态
         offLineMetadataService.updateTaskStateAndTotal(downloadFilePath, DownLoadStatusEnum.downloading, total);
-        int cycleIndex = IntUtils.getCycleCount(total, pageSize);
+        int cycleIndex = IntUtils.getCycleCount(total, DOWNLOAD_PAGE_SIZE);
         log.info("cycleIndex: " + cycleIndex);
         Object[] searchAfterValues;
         SearchIDEntity searchIDEntity;
-        int initialCapacity = MapUtils.getSize(pageSize);
+        int initialCapacity = MapUtils.getSize(DOWNLOAD_PAGE_SIZE);
         Map<String, Object> item = new HashMap<>(initialCapacity);
         for (int i = 0; i < cycleIndex; i++) {
             if (i == 0) {
-                item = this.downLoadByPage(cluster, project, keyWord, app, instance, hostID, source, pageSize, fromTime, toTime, null, downloadFileName);
+                item = this.downLoadByPage(cluster, project, keyWord, app, instance, hostID, source, DOWNLOAD_PAGE_SIZE, fromTime, toTime, null, downloadFileName);
                 continue;
             }
             searchIDEntity = (SearchIDEntity) item.get("searchAfter");
             searchAfterValues = new Object[]{searchIDEntity.getTimeStampSort(), searchIDEntity.getOffset(), searchIDEntity.getDocID()};
-            item = this.downLoadByPage(cluster, project, keyWord, app, instance, hostID, source, pageSize, fromTime, toTime, searchAfterValues, downloadFileName);
+            item = this.downLoadByPage(cluster, project, keyWord, app, instance, hostID, source, DOWNLOAD_PAGE_SIZE, fromTime, toTime, searchAfterValues, downloadFileName);
         }
         long end = System.currentTimeMillis();
         offLineMetadataService.updateTotalCost(downloadFilePath, total, end - start);

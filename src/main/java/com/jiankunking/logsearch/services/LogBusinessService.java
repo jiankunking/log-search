@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.util.ESQueryUtils;
 import com.jiankunking.logsearch.util.StringUtils;
 import com.jiankunking.logsearch.util.TimeUtils;
@@ -50,7 +51,7 @@ public class LogBusinessService {
      * @throws ESClusterNotFoundException
      * @throws ESClientNotFoundException
      */
-    public ArrayList<String> getAppList(String cluster, String project, long start, long end, int size) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+    public ArrayList<String> getAppList(String cluster, String project, long start, long end, int size) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
 
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.fetchSource("fields", null);
@@ -104,7 +105,7 @@ public class LogBusinessService {
      * @throws ESClusterNotFoundException
      * @throws ESClientNotFoundException
      */
-    public ArrayList<String> getInstances(String cluster, String project, long start, long end, int size, String app) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+    public ArrayList<String> getInstances(String cluster, String project, long start, long end, int size, String app) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         ArrayList<String> instances = new ArrayList();
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.fetchSource("fields", null);

@@ -3,6 +3,7 @@ package com.jiankunking.logsearch.advice;
 
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.exception.LengthOutOfBoundsException;
 import com.jiankunking.logsearch.util.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,10 @@ public class GlobalExceptionHandler {
         }
         if (ex instanceof ESClientNotFoundException || ex instanceof ESClusterNotFoundException) {
             ResponseUtils.handleBadReq(response, HttpServletResponse.SC_BAD_REQUEST, ex);
+            return;
+        }
+        if (ex instanceof ESClustersResponseTimeoutException) {
+            ResponseUtils.handleBadReq(response, HttpServletResponse.SC_SERVICE_UNAVAILABLE, ex);
             return;
         }
         ResponseUtils.handleBadReq(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex);

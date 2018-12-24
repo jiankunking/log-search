@@ -28,9 +28,9 @@ public class ESClients {
 
     private static ConsulService consulService = new ConsulService();
     /**
-     * 超时时间设为2分钟
+     * 超时时间设为5分钟
      */
-    private static int Maximum_Timeout = 2 * 60 * 1000;
+    private static int Maximum_Timeout = 5 * 60 * 1000;
     /**
      * es client 链接超时
      * https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/_timeouts.html

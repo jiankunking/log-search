@@ -6,6 +6,7 @@ import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.dto.SearchResult;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.model.SearchIDEntity;
 import com.jiankunking.logsearch.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class LogDownloadService {
 
     public void downloadByKeyWord(String cluster, String project, String keyWord, String app, String instance,
                                   String hostID, String source,
-                                  long fromTime, long toTime, HttpServletResponse res) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                  long fromTime, long toTime, HttpServletResponse res) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         int total = this.getTotal(cluster, project, keyWord, app, instance, hostID, source, fromTime, toTime);
 
         String fileName = String.format("%s-%s-%s-%d-%d.txt", project, app, keyWord, fromTime, toTime);
@@ -89,7 +90,7 @@ public class LogDownloadService {
     private Map<String, Object> downLoadByPage(String cluster, String project, String keyWord, String app, String instance,
                                                String hostID, String source,
                                                int pageSize, long fromTime, long toTime,
-                                               Object[] searchAfterValues, OutputStream outputStream) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                               Object[] searchAfterValues, OutputStream outputStream) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         //识别是否是首次搜索
         boolean firstSearch = false;
         if (searchAfterValues == null) {
@@ -161,7 +162,7 @@ public class LogDownloadService {
      * @throws ESClientNotFoundException
      */
     public int getTotal(String cluster, String project, String keyWord, String app, String instance,
-                        String hostID, String source, long fromTime, long toTime) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                        String hostID, String source, long fromTime, long toTime) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         esFilterService.addProjectFilter(project, boolQueryBuilder);

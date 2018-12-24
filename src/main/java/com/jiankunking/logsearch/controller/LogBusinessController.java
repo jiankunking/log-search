@@ -4,6 +4,7 @@ package com.jiankunking.logsearch.controller;
 import com.jiankunking.logsearch.aspect.ControllerTimeAnnotation;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.services.LogBusinessService;
 import com.jiankunking.logsearch.util.ResponseUtils;
 import com.jiankunking.logsearch.util.StringUtils;
@@ -38,7 +39,7 @@ public class LogBusinessController implements IApiVersion {
                                @PathVariable(value = "cluster", required = true) String cluster,
                                @PathVariable(value = "project", required = true) String project,
                                @RequestParam(name = "size", required = false, defaultValue = "1000") int size,
-                               HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                               HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         if (fromTime > toTime) {
             throw new IllegalArgumentException(" fromTime must be smaller than the toTime");
         }
@@ -59,7 +60,7 @@ public class LogBusinessController implements IApiVersion {
                                @PathVariable(value = "cluster", required = true) String cluster,
                                @PathVariable(value = "project", required = true) String project,
                                @PathVariable(value = "app", required = true) String app,
-                               HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                               HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         if (fromTime > toTime) {
             throw new IllegalArgumentException(" fromTime must be smaller than the toTime");
         }

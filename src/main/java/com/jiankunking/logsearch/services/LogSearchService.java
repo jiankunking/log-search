@@ -7,6 +7,7 @@ import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.dto.SearchResult;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.model.SearchIDEntity;
 import com.jiankunking.logsearch.util.ESQueryUtils;
 import com.jiankunking.logsearch.util.MapUtils;
@@ -73,7 +74,7 @@ public class LogSearchService {
     public SearchResult queryStringByKeyWord(String cluster, String project, String keyWord, String app, String instance,
                                              String hostID, String source,
                                              int pageSize, long fromTime, long toTime,
-                                             Object[] searchAfterValues, SortOrder sortOrder) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                             Object[] searchAfterValues, SortOrder sortOrder) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         esFilterService.addProjectFilter(project, boolQueryBuilder);
@@ -185,7 +186,7 @@ public class LogSearchService {
 
     private SearchResult getContextByID(String cluster, String project, String app, String instance, long fromTime, long toTime,
                                         Object[] searchAfterValues, SortOrder order,
-                                        String hostID, String source, int lines) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                        String hostID, String source, int lines) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -263,7 +264,7 @@ public class LogSearchService {
                                         long fromTime, long toTime,
                                         SortOrder order,
                                         SearchIDEntity searchIDEntity,
-                                        int lines) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                        int lines) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         ArrayList<Object> sorts = new ArrayList<>();
         sorts.add(searchIDEntity.getTimeStampSort());
         sorts.add(searchIDEntity.getOffset());

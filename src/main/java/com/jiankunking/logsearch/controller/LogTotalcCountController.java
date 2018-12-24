@@ -5,6 +5,7 @@ import com.jiankunking.logsearch.aspect.ControllerTimeAnnotation;
 import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.services.LogDownloadService;
 import com.jiankunking.logsearch.services.LogSearchService;
 import com.jiankunking.logsearch.util.ResponseUtils;
@@ -47,7 +48,7 @@ public class LogTotalcCountController implements IApiVersion {
                                   @PathVariable(name = "instance", required = true) String instance,
                                   @PathVariable(value = "cluster", required = true) String cluster,
                                   @PathVariable(value = "project", required = true) String project,
-                                  HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                  HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         if (fromTime > toTime) {
             throw new IllegalArgumentException(" fromTime must be smaller than the toTime ");
         }
@@ -69,7 +70,7 @@ public class LogTotalcCountController implements IApiVersion {
                                  @PathVariable(value = "project", required = true) String project,
                                  @PathVariable(name = "app", required = true) String app,
                                  @PathVariable(name = "instance", required = true) String instance,
-                                 HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                 HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         if (fromTime > toTime) {
             throw new IllegalArgumentException(" fromTime must be smaller than the toTime ");
         }

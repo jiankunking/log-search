@@ -5,6 +5,7 @@ import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.dto.SearchResult;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.model.SearchIDEntity;
 import com.jiankunking.logsearch.model.offline.DownLoadStatusEnum;
 import com.jiankunking.logsearch.model.offline.LogDownLoadTypeEnum;
@@ -54,7 +55,7 @@ public class OffLineLogDownloadService {
                     queryCondition.getInstance(), queryCondition.getHostID(), queryCondition.getSource(), queryCondition.getFromTime(), queryCondition.getToTime(), fileFullPath);
             offLineMetadataService.updateTaskState(fileFullPath, DownLoadStatusEnum.ziping);
             zipTask.add(fileFullPath);
-        } catch (NoSuchAlgorithmException | ESClientNotFoundException | IOException | ESClusterNotFoundException e) {
+        } catch (NoSuchAlgorithmException | ESClientNotFoundException | IOException | ESClusterNotFoundException | ESClustersResponseTimeoutException e) {
             offLineMetadataService.updateTaskState(fileFullPath, DownLoadStatusEnum.fail);
             log.error("downloadByKeyWord", e);
         }
@@ -77,7 +78,7 @@ public class OffLineLogDownloadService {
 
     private void downloadByKeyWord(String cluster, String project, String keyWord, String app, String instance,
                                    String hostID, String source,
-                                   long fromTime, long toTime, String downloadFilePath) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                   long fromTime, long toTime, String downloadFilePath) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         String downloadFileName = downloadFilePath + GlobalConfig.LOG_FILE_SUFFIX;
         long start = System.currentTimeMillis();
         int total = logDownloadService.getTotal(cluster, project, keyWord, app, instance, hostID, source, fromTime, toTime);
@@ -131,7 +132,7 @@ public class OffLineLogDownloadService {
     private Map<String, Object> downLoadByPage(String cluster, String project, String keyWord, String app, String instance,
                                                String hostID, String source,
                                                int pageSize, long fromTime, long toTime,
-                                               Object[] searchAfterValues, String downloadFileName) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                               Object[] searchAfterValues, String downloadFileName) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         //识别是否是首次搜索
         boolean firstSearch = false;
         if (searchAfterValues == null) {

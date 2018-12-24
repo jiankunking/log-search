@@ -7,6 +7,7 @@ import com.jiankunking.logsearch.config.GlobalConfig;
 import com.jiankunking.logsearch.dto.SearchResult;
 import com.jiankunking.logsearch.exception.ESClientNotFoundException;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.exception.ESClustersResponseTimeoutException;
 import com.jiankunking.logsearch.model.SearchIDEntity;
 import com.jiankunking.logsearch.services.LogSearchService;
 import com.jiankunking.logsearch.util.*;
@@ -68,7 +69,7 @@ public class LogSearchController implements IApiVersion {
                                 @PathVariable(name = "instance", required = true) String instance,
                                 @PathVariable(value = "cluster", required = true) String cluster,
                                 @PathVariable(value = "project", required = true) String project,
-                                HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                HttpServletResponse response) throws IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
 
         if (fromTime > toTime) {
             throw new IllegalArgumentException(" fromTime must be smaller than the toTime ");
@@ -122,7 +123,7 @@ public class LogSearchController implements IApiVersion {
                                     @PathVariable(name = "instance", required = true) String instance,
                                     @PathVariable(value = "cluster", required = true) String cluster,
                                     @PathVariable(value = "project", required = true) String project,
-                                    HttpServletResponse response) throws InterruptedException, IOException, ESClusterNotFoundException, ESClientNotFoundException {
+                                    HttpServletResponse response) throws InterruptedException, IOException, ESClusterNotFoundException, ESClientNotFoundException, ESClustersResponseTimeoutException {
         if (StringUtils.isEmpty(startID)) {
             throw new IllegalArgumentException(" startID are not allowed to be empty ");
         }

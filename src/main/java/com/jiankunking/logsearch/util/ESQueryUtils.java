@@ -32,10 +32,8 @@ public class ESQueryUtils {
         Response esResponse = null;
         RestClient client = null;
         try {
-            client = ESClients.getInstance(project, cluster);
-            esResponse = client.performRequest(method, endpoint, new HashMap(0), queryBody, header);
+            esResponse = ESClients.getInstance(project, cluster).performRequest(method, endpoint, new HashMap(0), queryBody, header);
         } catch (IOException e) {
-            //log.error("IOException:", e);
             throw new ESClustersResponseTimeoutException(e);
         } finally {
             if (client != null) {

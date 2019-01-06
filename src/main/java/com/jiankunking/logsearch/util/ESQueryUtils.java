@@ -12,6 +12,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,11 +30,17 @@ public class ESQueryUtils {
         Header header = new BasicHeader("content-type", "application/json");
 
         Response esResponse = null;
+        RestClient client = null;
         try {
-            esResponse = ESClients.getInstance(project, cluster).performRequest(method, endpoint, new HashMap(0), queryBody, header);
+            client = ESClients.getInstance(project, cluster);
+            esResponse = client.performRequest(method, endpoint, new HashMap(0), queryBody, header);
         } catch (IOException e) {
             //log.error("IOException:", e);
             throw new ESClustersResponseTimeoutException(e);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
         }
         return EntityUtils.toString(esResponse.getEntity());
     }

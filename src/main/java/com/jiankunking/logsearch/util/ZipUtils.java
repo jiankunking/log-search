@@ -1,5 +1,6 @@
 package com.jiankunking.logsearch.util;
 
+import org.apache.tools.zip.Zip64Mode;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ public class ZipUtils {
         if (!"".equals(path) && !path.endsWith(File.separator)) {
             path += File.separator;
         }
+        zipOut.setUseZip64(Zip64Mode.Always);
         if (!srcFile.getPath().equals(zip)) {
             if (srcFile.isDirectory()) {
                 File[] files = srcFile.listFiles();

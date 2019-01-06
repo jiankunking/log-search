@@ -172,7 +172,9 @@ public class OffLineLogDownloadService {
             }
         }
         result.put("searchAfter", searchIDEntity);
-        FileUtils.writeStringToFile(new File(downloadFileName), stringBuilder.toString(), GlobalConfig.CHARSET, true);
+        // todo 内存占用大 待优化
+        //FileUtils.writeStringToFile(new File(downloadFileName), stringBuilder.toString(), GlobalConfig.CHARSET, true);
+        AppendFile.appendToEnd(downloadFileName, stringBuilder.toString());
         return result;
     }
 

@@ -66,9 +66,14 @@ public class OffLineLogDownloadService {
         //压缩
         try {
             String zipFile = fileFullPath + GlobalConfig.ZIP_FILE_SUFFIX;
+            String logFile = fileFullPath + GlobalConfig.LOG_FILE_SUFFIX;
             ZipUtils.zipFile(zipFile, srcFile);
             long size = FileUtils.sizeOf(new File(zipFile));
             offLineMetadataService.updateZipFileSize(fileFullPath, size);
+            //减少pagecache占用
+            log.info("Start deleting log files :" + logFile);
+            FileUtils.forceDelete(new File(logFile));
+            log.info(" Log files were deleted successfully :" + logFile);
         } catch (IOException e) {
             log.error("downloadByKeyWord zipFile error :", e);
             offLineMetadataService.updateTaskState(fileFullPath, DownLoadStatusEnum.zipFail);
@@ -172,9 +177,7 @@ public class OffLineLogDownloadService {
             }
         }
         result.put("searchAfter", searchIDEntity);
-        // todo 内存占用大 待优化
-        //FileUtils.writeStringToFile(new File(downloadFileName), stringBuilder.toString(), GlobalConfig.CHARSET, true);
-        AppendFile.appendToEnd(downloadFileName, stringBuilder.toString());
+        FileUtils.writeStringToFile(new File(downloadFileName), stringBuilder.toString(), GlobalConfig.CHARSET, true);
         return result;
     }
 

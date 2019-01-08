@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+@Deprecated
 public class AppendFile {
     /**
      * 使用RandomAccessFile

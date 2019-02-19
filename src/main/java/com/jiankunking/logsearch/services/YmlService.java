@@ -113,7 +113,7 @@ public class YmlService {
         sb.append(GlobalConfig.LINE_BREAK);
         sb.append("  enabled: true");
         sb.append(GlobalConfig.LINE_BREAK);
-        sb.append("   paths:");
+        sb.append("  paths:");
         sb.append(GlobalConfig.LINE_BREAK);
         for (String path : fileBeatTypeConfig.getPaths()) {
             if (StringUtils.isEmpty(path)) {

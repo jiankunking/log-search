@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,17 +31,15 @@ public class NameSpacesCache {
     private static HashMap<String, Kubernetes> tenants = new HashMap<>();
 
     /**
-     *  每小时执行一次
-     *  测试每五秒执行一次：0/5 * * * * ?
+     * 每小时执行一次
+     * 测试每五秒执行一次：0/5 * * * * ?
      */
-    //@Scheduled(cron = "0 0 * * * ?")
     @Scheduled(cron = "0 5 * * * ?")
-    public void init() throws IOException {
+    public void init() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("NameSpacesCache init:" + df.format(new Date()));
         tenants = kubernetesTenants.getTenants();
         System.out.println("NameSpacesCache init finish:" + df.format(new Date()));
-
     }
 
     public List<Cluster> getClusters(String project) {

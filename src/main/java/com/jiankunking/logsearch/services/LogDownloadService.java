@@ -190,7 +190,7 @@ public class LogDownloadService {
         sourceBuilder.size(0).query(boolQueryBuilder);
         String queryJson = sourceBuilder.toString();
         //log.info(queryJson);
-        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(fromTime, toTime)), queryJson);
+        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(cluster, fromTime, toTime)), queryJson);
         Map responseMap = (Map) JSON.parse(resultJson);
         return (int) (((Map) responseMap.get("hits")).get("total"));
     }

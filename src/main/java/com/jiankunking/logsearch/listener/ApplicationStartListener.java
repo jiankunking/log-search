@@ -1,6 +1,7 @@
 package com.jiankunking.logsearch.listener;
 
 
+import com.jiankunking.logsearch.cache.IndexRetentionTimeCache;
 import com.jiankunking.logsearch.cache.NameSpacesCache;
 import com.jiankunking.logsearch.client.ESClients;
 import com.jiankunking.logsearch.config.EnvionmentVariables;
@@ -12,7 +13,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -30,6 +30,8 @@ public class ApplicationStartListener implements ApplicationListener<ContextRefr
     ZipTask zipTask;
     @Autowired
     NameSpacesCache nameSpacesCache;
+    @Autowired
+    IndexRetentionTimeCache indexRetentionTimeCache;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -37,7 +39,6 @@ public class ApplicationStartListener implements ApplicationListener<ContextRefr
             log.info(" start init es client ");
             ESClients.initAllESClients();
             log.info(" es client has been initialized ");
-
 
             if (EnvionmentVariables.ENABLE_OFFLINE_DOWNLOAD_FUNCTION) {
                 log.info(" start offLineTask.downLoadLogToFileStart ");
@@ -53,10 +54,12 @@ public class ApplicationStartListener implements ApplicationListener<ContextRefr
             nameSpacesCache.init();
             log.info(" namespaces has been initialized ");
 
+            log.info(" start init IndexRetentionTimeCache ");
+            indexRetentionTimeCache.init();
+            log.info(" IndexRetentionTimeCache has been initialized ");
+
         } catch (UnsupportedEncodingException e) {
             log.error("initAllESClients error:", e);
-        } catch (IOException e) {
-            log.error("nameSpacesCache init error:", e);
         }
 
     }

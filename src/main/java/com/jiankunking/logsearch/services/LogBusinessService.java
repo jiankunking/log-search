@@ -62,15 +62,17 @@ public class LogBusinessService {
         RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
                 .gte(TimeUtils.toDate(start))
                 .lte(TimeUtils.toDate(end));
-        sourceBuilder.query(rangeQueryBuilder);
+        //sourceBuilder.query(rangeQueryBuilder);
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         esFilterService.addProjectFilter(project, boolQueryBuilder);
+
+        boolQueryBuilder.must(rangeQueryBuilder);
         sourceBuilder.size(size).query(boolQueryBuilder);
         String queryJson = sourceBuilder.toString();
         //log.info(queryJson);
 
-        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(start, end)), queryJson);
+        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(cluster, start, end)), queryJson);
 
         //遍历获取 app
         Map responseMap = (Map) JSON.parse(resultJson);
@@ -128,7 +130,7 @@ public class LogBusinessService {
         String queryJson = sourceBuilder.size(size).toString();
         //log.info(queryJson);
 
-        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(start, end)), queryJson);
+        String resultJson = ESQueryUtils.performRequest(cluster, project, HttpMethod.GET.name(), ESQueryUtils.getEndpoint(indexPrefixService.getIndexPrefix(cluster, start, end)), queryJson);
 
         //遍历获取 app
         Map responseMap = (Map) JSON.parse(resultJson);

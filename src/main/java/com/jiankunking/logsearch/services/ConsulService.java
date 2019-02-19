@@ -3,6 +3,7 @@ package com.jiankunking.logsearch.services;
 import com.alibaba.fastjson.JSON;
 import com.jiankunking.logsearch.dto.ESCluster;
 import com.jiankunking.logsearch.exception.ESClusterNotFoundException;
+import com.jiankunking.logsearch.model.ESIndicesRetentionTime;
 import com.jiankunking.logsearch.model.LocationEnum;
 import com.jiankunking.logsearch.storage.ConsulStorage;
 import com.jiankunking.logsearch.util.Base64Utils;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.jiankunking.logsearch.config.GlobalConfig.ES_CLUSTER_PREFIX;
+import static com.jiankunking.logsearch.config.GlobalConfig.ES_INDICES_RETENTION_TIME_PREFIX;
 
 
 /**
@@ -116,5 +118,25 @@ public class ConsulService {
             return JSON.parseObject(Base64Utils.decoder(valueOptional.get().toString()), com.jiankunking.logsearch.dto.ESCluster.class);
         }
         throw new ESClusterNotFoundException("The cluster configuration for the projext not found in the consul：" + cluster);
+    }
+
+    /**
+     * 获取es 集群 index 保留时间
+     *
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public List<ESIndicesRetentionTime> getAllClustersIndexRetentionTime() throws UnsupportedEncodingException {
+        ConsulStorage consulStorage = new ConsulStorage();
+        List<Value> list = consulStorage.getByKeyPrefix(ES_INDICES_RETENTION_TIME_PREFIX);
+        List<ESIndicesRetentionTime> result = new ArrayList<>();
+        for (Value item : list) {
+            if (!item.getValue().isPresent()) {
+                continue;
+            }
+            ESIndicesRetentionTime esIndicesRetentionTime = JSON.parseObject(Base64Utils.decoder(item.getValue().get()), com.jiankunking.logsearch.model.ESIndicesRetentionTime.class);
+            result.add(esIndicesRetentionTime);
+        }
+        return result;
     }
 }

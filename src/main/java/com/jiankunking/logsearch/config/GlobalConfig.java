@@ -10,6 +10,7 @@ public class GlobalConfig {
     public static final String CONTENT_TYPE = "application/json; charset=utf-8";
 
     public static final String ES_CLUSTER_PREFIX = "/ESCluster/";
+    public static final String ES_INDICES_RETENTION_TIME_PREFIX = "/ESIndicesRetentionTime/";
     public static final String LINE_BREAK = "\n";
     public static final String SPACE = "  ";
     public static final String HEADER_UNAME = "X-UName";

@@ -2,7 +2,7 @@
 [https://blog.csdn.net/jiankunking/article/details/81806573](https://blog.csdn.net/jiankunking/article/details/81806573)
 
 # 二、支持功能 #
-[具体支持功能参见Wiki](https://github.com/jiankunking/log-search/wiki/日志检索功能简介)
+[具体支持功能参见Wiki](https://github.com/jiankunking/log-search/wiki/功能简介)
 
 
 # 三、前置 #

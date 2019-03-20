@@ -1,20 +1,11 @@
-# 架构设计 #
+# 一、架构设计 #
 [https://blog.csdn.net/jiankunking/article/details/81806573](https://blog.csdn.net/jiankunking/article/details/81806573)
 
-# 日志分享PPT #
-[https://github.com/jiankunking/ppt/tree/master/关于日志的那些事](https://github.com/jiankunking/ppt/tree/master/关于日志的那些事)
-
-# 支持功能 #
-1. **支持检索filebeat收集到elasticsearch中的日志信息(可以根据业务中项目、应用、实例的维度进行选择检索、下载)** 
-2. **支持查看、下载日志上下文** 
-3. **支持日志下载（在线、离线）** 
-4. **支持通过ansible-ext部署filebeat,部署过程、进度可视化**
-5. **单实例支持多elasticsearch集群检索、下载**
-6. **打通多来源日志与业务中项目、应用、实例的映射关系**
-7. **支持Elasticsearch Query String查询**
+# 二、支持功能 #
+[具体支持功能参见Wiki](https://github.com/jiankunking/log-search/wiki/日志检索功能简介)
 
 
- <h1 class="curproject-name"> log-search </h1> 
+# 三、前置 #
 
 1. 如果需要启用多行合并，日志格式需要统一（或者重新写一个pipeline）为：
 
@@ -38,9 +29,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 
 
 
-# 查询集群、应用、实例信息
+# 1、查询集群、应用、实例信息
 
-## 查询某个项目下的es集群
+## 1.1 查询某个项目下的es集群
 <a id=查询某个项目下的es集群> </a>
 ### 基本信息
 
@@ -61,7 +52,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     }
 ]
 ```
-## 获取集群中所有某个应用下的实例列表
+## 1.2 获取集群中所有某个应用下的实例列表
 <a id=获取集群中所有某个应用下的实例列表> </a>
 ### 基本信息
 
@@ -87,7 +78,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     "TEST"
 ]
 ```
-## 获取集群中某个项目下应用简称列表
+## 1.3 获取集群中某个项目下应用简称列表
 <a id=获取集群中某个项目下应用简称列表> </a>
 ### 基本信息
 
@@ -129,9 +120,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     "config-gc-gc"
 ]
 ```
-# 日志检索
+# 2、日志检索
 
-## 搜索
+## 2.1 搜索
 <a id=搜索> </a>
 ### 基本信息
 
@@ -193,7 +184,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     ]
 }
 ```
-## 某条日志上下文
+## 2.2 某条日志上下文
 <a id=某条日志上下文> </a>
 ### 基本信息
 
@@ -253,9 +244,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     ]
 }
 ```
-# filebeat部署
+# 3、filebeat部署
 
-## filebeat卸载
+## 3.1 filebeat卸载
 <a id=filebeat卸载> </a>
 ### 基本信息
 
@@ -267,7 +258,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 <p>实时流显示</p>
 
 
-## 批量部署filebeat
+## 3.2 批量部署filebeat
 <a id=批量部署filebeat> </a>
 ### 基本信息
 
@@ -279,7 +270,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 <p>实时流显示</p>
 
 
-## 查询agent版本
+## 3.3 查询agent版本
 <a id=查询agent版本> </a>
 ### 基本信息
 
@@ -299,7 +290,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
    ]
 }
 ```
-## 查询项目下安装信息
+## 3.4 查询项目下安装信息
 <a id=查询项目下安装信息> </a>
 ### 基本信息
 
@@ -316,7 +307,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     }
 ]
 ```
-## 给某个项目某台机器部署filebeat
+## 3.5 给某个项目某台机器部署filebeat
 <a id=给某个项目某台机器部署filebeat> </a>
 ### 基本信息
 
@@ -362,9 +353,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 {"result":{"job":"filebeat","type":"RECAP","host":"10.138.25.34","status":"ok","ok":15,"changed":8,"progress":100}}
 
 ```
-# 日志在线下载
+# 4、日志在线下载
 
-## 下个某条日志所在文件的日志
+## 4.1 下个某条日志所在文件的日志
 <a id=下个某条日志所在文件的日志> </a>
 ### 基本信息
 
@@ -380,7 +371,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 | toTime | 是  |  1543507200000 |  结束时间（包含） |
 | startID | 是  |  eyJkb2NJRCI6IkFXVVhMUEdIcWhmMUo0ZGtKU0VwIiwidGltZVN0YW1wU29ydCI6MTUzMzY5MjcwMDI4MywiaW5kZXgiOiJmaWxlYmVhdC02LjMuMi0yMDE4LjA4LjA4In0= |  日志id |
 
-## 下载符合搜索条件的日志
+## 4.2 下载符合搜索条件的日志
 <a id=下载符合搜索条件的日志> </a>
 ### 基本信息
 
@@ -405,9 +396,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 | toTime | 是  |  1543507200000 |  结束时间（包含） |
 | keyword | 是  |   |  搜索关键字 |
 
-# 日志离线下载
+# 5、日志离线下载
 
-## 查询某个项目离线日志下载任务列表
+## 5.1 查询某个项目离线日志下载任务列表
 <a id=查询某个项目离线日志下载任务列表> </a>
 ### 基本信息
 
@@ -565,7 +556,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     }
 ]
 ```
-## 离线下载某个实例的日志
+## 5.2 离线下载某个实例的日志
 <a id=离线下载某个实例的日志> </a>
 ### 基本信息
 
@@ -590,7 +581,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 | toTime | 是  |  1543507200000 |  结束时间（包含） |
 | startID | 是  |  eyJkb2NJRCI6IkFXVVhMUEdIcWhmMUo0ZGtKU0VwIiwidGltZVN0YW1wU29ydCI6MTUzMzY5MjcwMDI4MywiaW5kZXgiOiJmaWxlYmVhdC02LjMuMi0yMDE4LjA4LjA4In0= |  日志id |
 
-## 离线下载符合搜索条件的日志
+## 5.3 离线下载符合搜索条件的日志
 <a id=离线下载符合搜索条件的日志> </a>
 ### 基本信息
 
@@ -613,9 +604,9 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
 | toTime | 是  |  1543507200000 |  结束时间（包含） |
 | keyword | 是  |  error |  日志下载搜索关键字 |
 
-# 日志条数
+# 6、日志条数
 
-## 查询上下文日志总条数
+## 6.1 查询上下文日志总条数
 <a id=查询上下文日志总条数> </a>
 ### 基本信息
 
@@ -637,7 +628,7 @@ k8s:支持容器云，自动截取 infra-mongo-mongo-v1-0-b74b68988 v数字前�
     "total":1222
 }
 ```
-## 查询符合条件的日志总条数
+## 6.2 查询符合条件的日志总条数
 <a id=查询符合条件的日志总条数> </a>
 ### 基本信息
 

@@ -45,6 +45,9 @@
 * es client 复用
 
 
+# 三、API 文档
+[https://github.com/jiankunking/log-search/wiki/API-文档](https://github.com/jiankunking/log-search/wiki/API-文档)
+
 
 
 

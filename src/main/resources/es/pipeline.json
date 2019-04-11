@@ -20,7 +20,7 @@
                 "grok":{
                     "field":"docker.container.labels.io.kubernetes.pod.name",
                     "patterns":[
-                        "%{DATA:fields.app}-(?:app-)?v\d.*"
+                        "%{DATA:fields.app}-(?:app-)?v\\d.*"
                     ],
                     "on_failure":[
                         {
@@ -106,7 +106,7 @@
                 "grok":{
                     "field":"kubernetes.pod.name",
                     "patterns":[
-                        "%{DATA:app}-(?:app-)?v\d.*"
+                        "%{DATA:app}-(?:app-)?v\\d.*"
                     ]
                 }
             }
@@ -127,14 +127,14 @@
                 "grok":{
                     "field":"docker.container.name",
                     "patterns":[
-                        "^\d+_\d+_%{NOTSPACE:fields.app}"
+                        "^\\d+_\\d+_%{NOTSPACE:fields.app}"
                     ],
                     "on_failure":[
                         {
                             "grok":{
                                 "field":"docker.container.name",
                                 "patterns":[
-                                    "._%{NOTSPACE:fields.app}_+\d"
+                                    "._%{NOTSPACE:fields.app}_+\\d"
                                 ]
                             }
                         }

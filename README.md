@@ -1,5 +1,5 @@
 # 一、架构设计 #
-[https://blog.csdn.net/jiankunking/article/details/81806573](https://blog.csdn.net/jiankunking/article/details/81806573)
+[https://www.jiankunking.com/log-service-architecture-design.html](https://www.jiankunking.com/log-service-architecture-design.html)
 
 # 二、支持功能 #
 ## 1、实例无状态，支持水平拓展
